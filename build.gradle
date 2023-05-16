@@ -1,0 +1,90 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.26.0'
+}
+
+group 'com.grill.example'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url 'https://jitpack.io' }
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    def lwjglNativesWin = "natives-windows"
+
+    implementation fileTree(include: ["*.jar"], dir: "libs")
+    //implementation group: 'org.bytedeco', name: 'ffmpeg-platform', version: '6.0-1.5.9-SNAPSHOT'
+
+    implementation group: 'com.github.oshi', name: 'oshi-core', version: '3.4.3'
+    implementation 'org.tinylog:tinylog-api:2.1.0'
+    implementation 'org.tinylog:tinylog-impl:2.1.0'
+    implementation 'org.jcodec:jcodec:0.2.5'
+
+    // openglfx
+    implementation 'com.github.husker-dev.openglfx:core:3.0.4'
+    implementation 'com.github.husker-dev.openglfx:lwjgl:3.0.4'
+
+    // LWJGL
+    implementation platform('org.lwjgl:lwjgl-bom:3.3.2')
+    implementation 'org.lwjgl:lwjgl'
+    implementation 'org.lwjgl:lwjgl-opengl'
+
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNativesWin"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNativesWin"
+    //runtimeOnly "org.lwjgl:lwjgl::$lwjglNativesLin"
+    //runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNativesLin"
+
+    // test dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+javafx {
+    version = '17.0.6'
+    modules = ['javafx.graphics', 'javafx.controls', 'javafx.fxml', 'javafx.base']
+}
+
+run {
+    jvmArgs = [
+            "--add-opens=javafx.base/com.sun.javafx=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.prism=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.prism.d3d=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.javafx.scene.layout=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/javafx.scene.image=ALL-UNNAMED"
+    ]
+}
+
+jlink {
+    addExtraDependencies("javafx")
+    launcher {
+        name = 'Example'
+        jvmArgs = [
+                "--add-opens=javafx.base/com.sun.javafx=ALL-UNNAMED",
+                "--add-opens=javafx.graphics/com.sun.prism=ALL-UNNAMED",
+                "--add-opens=javafx.graphics/com.sun.prism.d3d=ALL-UNNAMED",
+                "--add-opens=javafx.graphics/com.sun.javafx.scene.layout=ALL-UNNAMED",
+                "--add-opens=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+                "--add-opens=javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED",
+                "--add-opens=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED",
+                "--add-opens=javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
+                "--add-opens=javafx.graphics/javafx.scene.image=ALL-UNNAMED"
+        ]
+    }
+}
+
+mainClassName = 'com.grill.example.App'
